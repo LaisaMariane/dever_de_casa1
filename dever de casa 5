@@ -1,0 +1,41 @@
+const express = require('express'); // Importa o módulo Express
+const app = express(); // Cria uma instância do aplicativo Express
+const port = 3002;
+
+// Inicializa um objeto para armazenar o contador de acessos por método
+const contadorAcesso = {
+    GET: 0,
+    POST: 0
+};
+
+// Middleware para contar o número de acessos para cada método
+app.use((req, res, next) => {
+    // Verifica o método da requisição
+    const method = req.method;
+
+    if (method === 'GET') {
+        contadorAcesso.GET++;
+    } else if (method === 'POST') {
+        contadorAcesso.POST++;
+    }
+    // próximo rota
+    next();
+});
+
+// GET para obter o contador de acessos
+app.get('/contador', (req, res) => {
+  
+    res.json(contadorAcesso);
+});
+
+// Rota POST para simular uma requisição POST
+app.post('/', (req, res) => {
+    
+    res.send('Requisição POST recebida com sucesso!');
+});
+
+
+
+app.listen(port, () => {
+    console.log(`Servidor rodando em localhost:${port}`);
+});
