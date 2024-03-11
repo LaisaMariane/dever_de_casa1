@@ -1,0 +1,53 @@
+const express = require('express');
+const bodyParser = require('body-parser');
+
+const app = express();
+const PORT = 3000;
+
+// Vetor para armazenar os dados dos usuários
+let users = [];
+
+app.use(bodyParser.json());
+
+app.get("/", (req, res)=>{
+    res.send("Dever da Aula 03")
+})
+
+// Rota para receber dados de cadastro de usuário
+app.post('/cadastro*', (req, res) => {
+    const { nome, cep, email } = req.body;
+
+    // Verificar se todos os campos foram fornecidos
+    if (!nome || !cep || !email) {
+        return res.status(400).json({ mensagem: 'Por favor, forneça nome, CEP e email.' });
+    }
+
+    // Adicionar usuário ao vetor
+    users.push({ nome, cep, email });
+    res.status(201).json({ mensagem: 'Usuário cadastrado com sucesso.' });
+});
+
+// Rota para retornar todos os usuários
+app.get('/usuario*', (req, res) => {
+    res.json(users);
+});
+
+// Rota para retornar dados de um usuário pelo nome
+app.get('/usuario/:nome', (req, res) => {
+    const { nome } = req.params;
+
+    // Buscar usuário pelo nome
+    const usuario = users.find(user => user.nome === nome);
+
+    // Verificar se o usuário foi encontrado
+    if (usuario) {
+        res.json(usuario);
+    } else {
+        res.status(404).json({ mensagem: 'Usuário não encontrado na base de dados.' });
+    }
+});
+
+// Iniciar o servidor
+app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+});
